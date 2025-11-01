@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Nút nhấn ERA IoT</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f3f3f3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  h3 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  .button {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s;
+  }
+
+  .button.active {
+    background: #19a974;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(25,169,116,0.6);
+  }
+</style>
+</head>
+<body>
+  <h3>Nút điều khiển ERA</h3>
+  <div id="btn" class="button" onclick="toggleButton()">TẮT</div>
+
+<script>
+  let state = false;
+  const btn = document.getElementById("btn");
+
+  function toggleButton() {
+    state = !state;
+    btn.classList.toggle("active", state);
+    btn.textContent = state ? "BẬT" : "TẮT";
+
+    // Gửi tín hiệu ra ERA Platform (qua iframe)
+    parent.postMessage({ type: "toggle", value: state }, "*");
+  }
+
+  // Nhận trạng thái từ ERA (nếu có)
+  window.addEventListener("message", (e) => {
+    if (e.data.type === "update") {
+      state = e.data.value;
+      btn.classList.toggle("active", state);
+      btn.textContent = state ? "BẬT" : "TẮT";
+    }
+  });
+</script>
+</body>
+</html>
